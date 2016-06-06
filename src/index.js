@@ -548,7 +548,7 @@
             parentNodes.exit().remove();
 
             // Select all of the children nodes.
-            var childrenNodes = this.svg.selectAll('.relationshipGraph-block')
+            var childrenNodes = this.svg.selectAll('.relationshipGraph-node')
                 .data(json);
 
             // Add new child nodes.
@@ -556,12 +556,9 @@
 
             // Update existing child nodes.
             childrenNodes.transition(_this.config.transitionTime)
-                .attr('x', function(obj) {
-                    return longestWidth + ((obj.index - 1) * _this.config.blockSize);
-                })
-                .attr('y', function(obj) {
-                    return (obj.row - 1) * _this.config.blockSize;
-                })
+		.attr( "transform", function(obj) { var x = longestWidth + ((obj.index - 1) * _this.config.blockSize);
+						     var y = (obj.row - 1) * _this.config.blockSize;
+						     return "translate ("+x+" "+y+")"; })
                 .style('fill', function(obj) {
                     return _this.config.colors[obj.color % _this.config.colors.length] || _this.config.colors[0];
                 });
