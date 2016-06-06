@@ -12,6 +12,9 @@
     cursor: pointer;
 }
 
+.relationshipGraph-ParentBox {
+}
+
 .relationshipGraph-Text {
     font-family: Helvetica, sans-serif;
     font-size: 10pt;

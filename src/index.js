@@ -487,44 +487,13 @@
             var parentNodes = this.svg.selectAll('.relationshipGraph-Text')
                 .data(parents);
 
-            // Add new parent nodes.
-            parentNodes.enter().append('text')
-                .text(function(obj, index) {
-                    return obj + ' (' + parentSizes[Object.keys(parentSizes)[index]] + ')';
-                })
-                .attr('x', function(obj, index) {
+	    function parentTextXFunction(obj,index) {
                     var width = _this.ctx.measureText(obj + ' (' + parentSizes[Object.keys(parentSizes)[index]] + ')');
                     return longestWidth - width.width;
-                })
-                .attr('y', function(obj, index) {
-                    if (index === 0) {
-                        return 0;
-                    }
+	    }
 
-                    // Determine the Y coordinate by determining the Y coordinate of all of the parents before.
-                    var y = Math.ceil(previousParentSizes / calculatedMaxChildren) * _this.config.blockSize;
-                    previousParentSizes += y;
-
-                    return y;
-                })
-                .style('text-anchor', 'start')
-                .style('fill', function(obj) {
-                    return (obj.parentColor !== undefined) ? _this.config.colors[obj.parentColor] : '#000000';
-                })
-                .attr('class', 'relationshipGraph-Text')
-                .attr('transform', 'translate(-6, ' + this.config.blockSize / 1.5 + ')');
-
-            // Update existing parent nodes.
-            parentNodes
-                .text(function(obj, index) {
-                    return obj + ' (' + parentSizes[Object.keys(parentSizes)[index]] + ')';
-                })
-                .attr('x', function(obj, index) {
-                    var width = _this.ctx.measureText(obj + ' (' + parentSizes[Object.keys(parentSizes)[index]] + ')');
-                    return longestWidth - width.width;
-                })
-                .attr('y', function(obj, index) {
-                    if (index === 0) {
+	    function parentTextYFunction(obj, index) {
+		                    if (index === 0) {
                         return 0;
                     }
 
@@ -539,7 +508,29 @@
                     }
 
                     return Math.ceil(previousParentSize / calculatedMaxChildren) * _this.config.blockSize;
+	    }
+	    // Add new parent nodes.
+            var parentGroups = parentNodes.enter().append('g');
+	    parentGroups.append('text')
+                .text(function(obj, index) {
+                    return obj + ' (' + parentSizes[Object.keys(parentSizes)[index]] + ')';
                 })
+                .attr('x', parentTextXFunction)
+                .attr('y', parentTextYFunction)
+                .style('text-anchor', 'start')
+                .style('fill', function(obj) {
+                    return (obj.parentColor !== undefined) ? _this.config.colors[obj.parentColor] : '#000000';
+                })
+                .attr('class', 'relationshipGraph-Text')
+                .attr('transform', 'translate(-6, ' + this.config.blockSize / 1.5 + ')');
+
+            // Update existing parent nodes.
+            parentNodes.select('text')
+                .text(function(obj, index) {
+                    return obj + ' (' + parentSizes[Object.keys(parentSizes)[index]] + ')';
+                })
+	        .attr('x', parentTextXFunction)
+                .attr('y', parentTextYFunction)
                 .style('fill', function(obj) {
                     return (obj.parentColor !== undefined) ? _this.config.colors[obj.parentColor] : '#000000';
                 });
