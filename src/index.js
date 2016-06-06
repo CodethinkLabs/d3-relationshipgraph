@@ -103,12 +103,13 @@
          * transitionTime: (*|number)}}
          */
         this.config = {
-            blockSize: 24,  // The block size for each child.
+            blockSize: 64,  // The block size for each child.
             selection: selection,  // The ID for the graph.
             showTooltips: userConfig.showTooltips,  // Whether or not to show the tooltips on hover.
             maxChildCount: userConfig.maxChildCount || 0,  // The maximum amount of children to show per row before wrapping.
             onClick: userConfig.onClick || noop,  // The callback function to call when a child is clicked. This function gets passed the JSON for the child.
             showKeys: userConfig.showKeys,  // Whether or not to show the keys in the tooltip.
+            nodeDrawCallback: userConfig.nodeDrawCallback || null,  // Whether or not to show the keys in the tooltip.
             thresholds: userConfig.thresholds,  // Thresholds to determine the colors of the child blocks with.
             colors: userConfig.colors || ['#c4f1be', '#a2c3a4', '#869d96', '#525b76', '#201e50',
                 '#485447', '#5b7f77', '#6474ad', '#b9c6cb', '#c0d6c1',
@@ -551,28 +552,7 @@
                 .data(json);
 
             // Add new child nodes.
-            childrenNodes.enter()
-                .append('rect')
-                .attr('x', function(obj) {
-                    return longestWidth + ((obj.index - 1) * _this.config.blockSize);
-                })
-                .attr('y', function(obj) {
-                    return (obj.row - 1) * _this.config.blockSize;
-                })
-                .attr('rx', 4)
-                .attr('ry', 4)
-                .attr('class', 'relationshipGraph-block')
-                .attr('width', _this.config.blockSize)
-                .attr('height', _this.config.blockSize)
-                .style('fill', function(obj) {
-                    return _this.config.colors[obj.color % _this.config.colors.length] || _this.config.colors[0];
-                })
-                .on('mouseover', _this.tip ? _this.tip.show : noop)
-                .on('mouseout', _this.tip ? _this.tip.hide : noop)
-                .on('click', function(obj) {
-                    _this.tip.hide();
-                    _this.config.onClick(obj);
-                });
+            _this.config.nodeDrawCallback(_this, childrenNodes.enter());
 
             // Update existing child nodes.
             childrenNodes.transition(_this.config.transitionTime)
