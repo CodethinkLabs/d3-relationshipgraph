@@ -509,6 +509,12 @@
 
                     return Math.ceil(previousParentSize / calculatedMaxChildren) * _this.config.blockSize;
 	    }
+
+	    function parentBoxHeightFunction(obj, index) {
+                var children = Math.ceil(parentSizes[Object.keys(parentSizes)[index]] / calculatedMaxChildren) * calculatedMaxChildren;
+                return Math.ceil(children / calculatedMaxChildren) * _this.config.blockSize;
+	    }
+
 	    // Add new parent nodes.
             var parentGroups = parentNodes.enter().append('g');
 	    parentGroups.append('text')
@@ -523,6 +529,15 @@
                 })
                 .attr('class', 'relationshipGraph-Text')
                 .attr('transform', 'translate(-6, ' + this.config.blockSize / 1.5 + ')');
+
+	    parentGroups.append('rect')
+	        .attr('x', parentTextXFunction)
+	        .attr('y', parentTextYFunction)
+	        .attr('width', 64)
+	        .attr('height', parentBoxHeightFunction)
+	        .attr('class', 'relationshipGraph-ParentBox')
+	        .attr('fill', 'none')
+	        .attr('stroke', '#000000');
 
             // Update existing parent nodes.
             parentNodes.select('text')
