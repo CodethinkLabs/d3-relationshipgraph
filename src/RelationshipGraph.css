@@ -18,6 +18,12 @@
     fill: none;
 }
 
+.relationshipGraph-Link {
+    stroke: #F7F7F7;
+    stroke-width: 1px;
+    fill: none;
+}
+
 .relationshipGraph-Text {
     font-family: Helvetica, sans-serif;
     font-size: 10pt;

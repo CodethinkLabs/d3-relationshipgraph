@@ -75,6 +75,8 @@
     ];
 
 
+    var calls = [ { source: 0, target: 1}, {source: 1, target: 2} ];
+    
     function nodeDrawCallback(_this, thing)
     {
     group = thing.append('g');
@@ -95,7 +97,11 @@
                 .on('mouseout', _this.tip ? _this.tip.hide : noop)
                 .on('click', function(obj) {
                     _this.tip.hide();
-                _this.config.onClick(obj);
+    _this.config.onClick(obj);
+
+    
+    
+
     });
     group.append('text').attr('x', 0).attr('y', (_this.config.blockSize)/2).attr("fill", "#000").text(function(obj) { return obj.Object; });
     group.attr('class', 'relationshipGraph-node');
@@ -156,7 +162,7 @@
 	// Thing to add all the callers
 	var data = [ "A", "B", "C", "D" ];
 
-        var group = d3.select(".callsIn")
+	var group = d3.select(".callsIn")
         .selectAll("rect")
 	.data(data)
 	.enter().append("g");
@@ -170,7 +176,7 @@
 	.style("fill", "#000000");
 
 	group.append("text")
-	.attr("x", 0)
+	.attr("x", 10)
 	.attr("y", function(d, index) { return index*40+20; })
 	.style("fill", "#ffffff")
 	.text(function(d) { return "Package "+d });
@@ -193,12 +199,13 @@
 	.style("fill", "#000000");
 
 	group.append("text")
-	.attr("x", 0)
+	.attr("x", 10)
 	.attr("y", function(d, index) { return index*40+20; })
 	.style("fill", "#ffffff")
 	.text(function(d) { return "Package "+d });
 
 
-</script>
+
+	</script>
 </body>
 </html>

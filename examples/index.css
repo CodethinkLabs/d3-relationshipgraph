@@ -1,6 +1,5 @@
 .mini-layout-body {
     background-color: #dceaf4;
-    height: 600px;
     display: inline-block;
     float: none;
     width: 50%;
@@ -24,7 +23,7 @@
 
 .mini-layout-object {
     background-color: #ccc;
-    height: 200px;
+    height: 900px;
     overflow: auto;
 }
 

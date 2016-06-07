@@ -560,6 +560,15 @@
             // Add new child nodes.
             _this.config.nodeDrawCallback(_this, childrenNodes.enter());
 
+	    var linkJson = [ {source: 0, target:1 } ];
+
+            var linkNodes = this.svg.selectAll('.relationshipGraph-call').data(linkJson);
+            // Add new child nodes.
+            linkNodes.enter().append("line").attr('x1', 50)
+		.attr('y1', function(obj, index) { return parentTextYFunction(null, obj.source)} )
+		.attr('x2', 20)
+		.attr('y2', function(obj, index) { return parentTextYFunction(null, obj.target)} ).style("stroke", "#000").attr('class', 'relationshipGraph-call');
+
             // Update existing child nodes.
             childrenNodes.transition(_this.config.transitionTime)
 		.attr( "transform", function(obj) { var x = longestWidth + ((obj.index - 1) * _this.config.blockSize);
@@ -571,7 +580,8 @@
 
             // Delete removed child nodes.
             childrenNodes.exit().transition(_this.config.transitionTime).remove();
-
+            linkNodes.exit().transition(_this.config.transitionTime).remove();
+	    
             if (this.config.showTooltips) {
                 d3.select('.d3-tip').remove();
                 this.svg.call(this.tip);
