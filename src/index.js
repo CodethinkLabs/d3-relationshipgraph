@@ -553,21 +553,33 @@
             // Remove deleted parent nodes.
             parentNodes.exit().remove();
 
-            // Select all of the children nodes.
+	    // Find a node with a given name and parent
+	    function lookUpNode(objectName, symbolName)
+	    {
+		console.log("Looking up object "+objectName+"/"+symbolName);
+		for (var i=0;i<json.length;i++) {
+		    var node = json[i];
+		    if(node.Object == symbolName && node.parent == objectName) return node;
+		}
+		console.log("No object found called "+objectName+"/"+symbolName);
+		return null;
+	    }
+
+	    // Select all of the children nodes.
             var childrenNodes = this.svg.selectAll('.relationshipGraph-node')
                 .data(json);
 
             // Add new child nodes.
             _this.config.nodeDrawCallback(_this, childrenNodes.enter());
 
-	    var linkJson = [ {source: 0, target:1 } ];
+	    var linkJson = [ {source: [0, 'Sym1', 'alx.o'], target:[1,'Sym3', 'ttf.o'] } ];
 
             var linkNodes = this.svg.selectAll('.relationshipGraph-call').data(linkJson);
             // Add new child nodes.
-            linkNodes.enter().append("line").attr('x1', 50)
-		.attr('y1', function(obj, index) { return parentTextYFunction(null, obj.source)} )
-		.attr('x2', 20)
-		.attr('y2', function(obj, index) { return parentTextYFunction(null, obj.target)} ).style("stroke", "#000").attr('class', 'relationshipGraph-call');
+            linkNodes.enter().append("line").attr('x1', function(obj, index) { return 32;})
+		.attr('y1', function(obj, index) { return parentTextYFunction(obj);} )
+		.attr('x2', function(obj, index) { return 32 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
+	        .attr('y2', function(obj, index) { return parentTextYFunction(null, obj.target[0]) + nodeYFunction(lookUpNode(obj.target[2], obj.target[1]));} ).style("stroke", "#000").attr('class', 'relationshipGraph-call');
 
             // Update existing child nodes.
             childrenNodes.transition(_this.config.transitionTime)
@@ -578,10 +590,16 @@
                     return _this.config.colors[obj.color % _this.config.colors.length] || _this.config.colors[0];
                 });
 
+	    linkNodes.transition(_this.config.transitionTime)
+	        .attr('x1', function(obj) { return 32;})
+		.attr('y1', function(obj) { return parentTextYFunction(obj);} )
+		.attr('x2', function(obj) { return 32 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
+	        .attr('y2', function(obj) { return parentTextYFunction(null, obj.target[0]) + nodeYFunction(lookUpNode(obj.target[2], obj.target[1]));} );
+
             // Delete removed child nodes.
             childrenNodes.exit().transition(_this.config.transitionTime).remove();
             linkNodes.exit().transition(_this.config.transitionTime).remove();
-	    
+
             if (this.config.showTooltips) {
                 d3.select('.d3-tip').remove();
                 this.svg.call(this.tip);

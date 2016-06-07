@@ -76,13 +76,20 @@
 
 
     var calls = [ { source: 0, target: 1}, {source: 1, target: 2} ];
-    
+
+    blockSize = 32;
+
+    function nodeXFunction (obj) { return 32 + ((obj.index - 1) * blockSize); }
+    function nodeYFunction (obj) { return (obj.row - 1) * blockSize; }
+
+    function nodeTranslationFunction (obj) { var x = nodeXFunction(obj);
+    var y = nodeYFunction(obj);
+    return "translate ("+x+" "+y+")"; }
+
     function nodeDrawCallback(_this, thing)
     {
     group = thing.append('g');
-    group.attr( "transform", function(obj) { var x =32 + ((obj.index - 1) * _this.config.blockSize);
-    var y = (obj.row - 1) * _this.config.blockSize;
-    return "translate ("+x+" "+y+")"; } );
+    group.attr( "transform", nodeTranslationFunction );
     group.append('rect').attr('x', 0)
                 .attr('y', 0)
                 .attr('rx', 4)
@@ -97,12 +104,8 @@
                 .on('mouseout', _this.tip ? _this.tip.hide : noop)
                 .on('click', function(obj) {
                     _this.tip.hide();
-    _this.config.onClick(obj);
-
-    
-    
-
-    });
+                  _this.config.onClick(obj);
+                });
     group.append('text').attr('x', 0).attr('y', (_this.config.blockSize)/2).attr("fill", "#000").text(function(obj) { return obj.Object; });
     group.attr('class', 'relationshipGraph-node');
 
@@ -136,7 +139,11 @@
 
     function random() {
         var getData = function () {
-            var json = [];
+            var json = [ {
+            "Object": "Sym3",
+                "parent": "ttf.o",
+    "value": 2
+    }]
 
             for (var j = 0; j < 35; j++) {
                 var obj = {
