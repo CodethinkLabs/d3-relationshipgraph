@@ -16,7 +16,7 @@
 <body>
 <h1 style="text-align: center; font-family: Helvetica, sans-serif; color: #323232">Objects in packages</h1>
 <div class="row mini-layout">
-  <div class="col-md-3 mini-layout-sidebar callsIn">
+  <div class="col-md-3 mini-layout-sidebar">
     <!--Left Sidebar content - things that call into this package-->
     <svg width="100%" height="500" style="background-color:#fff;" class="callsIn">
     </svg>
@@ -33,10 +33,7 @@
     </div>
   </div>
   <div class="col-md-3 mini-layout-sidebar">
-    <svg width="100%" height="500" style="background-color:#fff;">
-      <rect id="redRect" height="50" width="220" y="1" x="1" fill="green" />
-      <rect id="redRect" height="50" width="220" y="52" x="1" fill="green" />
-      <rect id="redRect" height="50" width="220" y="103" x="1" fill="green" />
+    <svg width="100%" height="500" style="background-color:#fff;" class="callsOut">
     </svg>
     <!--Right Sidebar content -packages this package calls-->
   </div>
@@ -108,7 +105,7 @@
 
     var graph = d3.select('#graph').relationshipGraph({
         'showTooltips': true,
-        'maxChildCount': 2,
+        'maxChildCount': 3,
     'showKeys': false,
     'blockSize': 32,
     'nodeDrawCallback': nodeDrawCallback,
@@ -117,6 +114,7 @@
     },
     colors: ['red', 'green', 'blue'],
     });
+
 
     graph.data(json1);
 
@@ -153,7 +151,53 @@
         }
 
         document.querySelector('h1').innerHTML = 'Random Data';
-    }
+				}
+
+	// Thing to add all the callers
+	var data = [ "A", "B", "C", "D" ];
+
+        var group = d3.select(".callsIn")
+        .selectAll("rect")
+	.data(data)
+	.enter().append("g");
+
+	group.append("rect").attr("width", function(d) { return "100"; })
+	.attr("height", function(d) { return 32; })
+				.attr("x", 0)
+				.attr("rx", 4)
+				.attr("ry", 4)
+	.attr("y", function(d, index) { return index*40; })
+	.style("fill", "#000000");
+
+	group.append("text")
+	.attr("x", 0)
+	.attr("y", function(d, index) { return index*40+20; })
+	.style("fill", "#ffffff")
+	.text(function(d) { return "Package "+d });
+
+	// And the same for calls out
+	var data = [ "E", "F", "G", "H" ];
+
+        var group = d3.select(".callsOut")
+        .selectAll("rect")
+	.data(data)
+	.enter().append("g");
+
+	group.append("rect").attr("width", function(d) { return "100"; })
+	.attr("height", function(d) { return 32; })
+	.attr("x", 0)
+	.attr("y", function(d, index) { return index*40; })
+	.attr("rx", 4)
+	.attr("ry", 4)
+
+	.style("fill", "#000000");
+
+	group.append("text")
+	.attr("x", 0)
+	.attr("y", function(d, index) { return index*40+20; })
+	.style("fill", "#ffffff")
+	.text(function(d) { return "Package "+d });
+
 
 </script>
 </body>
