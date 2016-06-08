@@ -115,44 +115,34 @@ function random() {
 // Thing to add all the callers
 var data = [ "A", "B", "C", "D" ];
 
-var group = d3.select(".callsIn")
-    .selectAll("rect")
-    .data(data)
-    .enter().append("g");
+function setPackageLabelAttributes(selection)
+{
+    selection.attr("height", function(d) { return 32; })
+	.attr("x", 0).attr("rx", 4).attr("ry", 4)
+	.attr("y", function(d, index) { return index*40; })
+	.style("fill", "#000000")
+	.attr("width", 100);
+}
 
-group.append("rect").attr("width", function(d) { return "100"; })
-    .attr("height", function(d) { return 32; })
-    .attr("x", 0)
-    .attr("rx", 4)
-    .attr("ry", 4)
-    .attr("y", function(d, index) { return index*40; })
-    .style("fill", "#000000");
+function setPackageLabelTextAttributes(selection)
+{
+    selection.attr("x", 10)
+	.attr("y", function(d, index) { return index*40+20; })
+	.style("fill", "#ffffff")
+	.text(function(d) { return "Package "+d });
+}
 
-group.append("text")
-    .attr("x", 10)
-    .attr("y", function(d, index) { return index*40+20; })
-    .style("fill", "#ffffff")
-    .text(function(d) { return "Package "+d });
+
+var group = d3.select(".callsIn").selectAll("rect").data(data).enter().append("g");
+
+setPackageLabelAttributes(group.append("rect"));
+
+setPackageLabelTextAttributes(group.append("text"));
 
 // And the same for calls out
 var data = [ "E", "F", "G", "H" ];
 
-var group = d3.select(".callsOut")
-    .selectAll("rect")
-    .data(data)
-    .enter().append("g");
+var group = d3.select(".callsOut").selectAll("rect").data(data).enter().append("g");
 
-group.append("rect").attr("width", function(d) { return "100"; })
-    .attr("height", function(d) { return 32; })
-    .attr("x", 0)
-    .attr("y", function(d, index) { return index*40; })
-    .attr("rx", 4)
-    .attr("ry", 4)
-
-    .style("fill", "#000000");
-
-group.append("text")
-    .attr("x", 10)
-    .attr("y", function(d, index) { return index*40+20; })
-    .style("fill", "#ffffff")
-    .text(function(d) { return "Package "+d });
+setPackageLabelAttributes(group.append("rect"));
+setPackageLabelTextAttributes(group.append("text"));
