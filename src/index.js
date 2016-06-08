@@ -493,21 +493,28 @@
 	    }
 
 	    function parentTextYFunction(obj, index) {
-		                    if (index === 0) {
-                        return 0;
-                    }
-
+		if (index === 0 || index === "undefined") {
+                    console.log("PTY: no index; returning 0");
+		    return 0;
+                }
+		console.log("looking up parent Text Y: index is "+index);
                     // Determine the Y coordinate by determining the Y coordinate of all of the parents before. This has to be calculated completely
                     // because it is an update and can occur anywhere.
                     var previousParentSize = 0,
                         i = index - 1;
 
                     while (i > -1) {
-                        previousParentSize += Math.ceil(parentSizes[Object.keys(parentSizes)[i]] / calculatedMaxChildren) * calculatedMaxChildren;
+			var key = Object.keys(parentSizes)[i];
+			if(key) {
+                            previousParentSize += Math.ceil(parentSizes[key] / calculatedMaxChildren) * calculatedMaxChildren;
+			    console.log("Index "+i+"; previousParentSize is now "+previousParentSize+". Keys="+Object.keys(parentSizes)[i]);
+			}
                         i--;
                     }
 
-                    return Math.ceil(previousParentSize / calculatedMaxChildren) * _this.config.blockSize;
+		var y =  Math.ceil(previousParentSize / calculatedMaxChildren) * _this.config.blockSize;
+                console.log("PTY: returning "+y+" for "+calculatedMaxChildren+" maxChildren, "+previousParentSize+" prevParents");
+		return y;
 	    }
 
 	    function parentBoxHeightFunction(obj, index) {
@@ -559,7 +566,8 @@
 		console.log("Looking up object "+objectName+"/"+symbolName);
 		for (var i=0;i<json.length;i++) {
 		    var node = json[i];
-		    if(node.Object == symbolName && node.parent == objectName) return node;
+		    if(node.Object == symbolName && node.parent == objectName)
+			return node;
 		}
 		console.log("No object found called "+objectName+"/"+symbolName);
 		return null;
@@ -572,30 +580,31 @@
             // Add new child nodes.
             _this.config.nodeDrawCallback(_this, childrenNodes.enter());
 
-	    var linkJson = [ {source: [0, 'Sym1', 'alx.o'], target:[1,'Sym3', 'ttf.o'] } ];
+	    var linkJson = [ {source: [0, 'Sym2', 'd3d.o'], target:[1,'Sym4', 'klf.o'] },
+			     {source: [0, 'Sym3', 'd3d.o'], target:[1,'Sym3', 'ttf.o'] }];
 
             var linkNodes = this.svg.selectAll('.relationshipGraph-call').data(linkJson);
             // Add new child nodes.
-            linkNodes.enter().append("line").attr('x1', function(obj, index) { return 32;})
-		.attr('y1', function(obj, index) { return parentTextYFunction(obj);} )
-		.attr('x2', function(obj, index) { return 32 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
+            linkNodes.enter().append("line").attr('x1', function(obj) { return 64;})
+		.attr('y1', function(obj, index) { return parentTextYFunction(null, index);} )
+		.attr('x2', function(obj, index) { return 64 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
 	        .attr('y2', function(obj, index) { return parentTextYFunction(null, obj.target[0]) + nodeYFunction(lookUpNode(obj.target[2], obj.target[1]));} ).style("stroke", "#000").attr('class', 'relationshipGraph-call');
 
             // Update existing child nodes.
             childrenNodes.transition(_this.config.transitionTime)
 		.attr( "transform", function(obj) { var x = longestWidth + ((obj.index - 1) * _this.config.blockSize);
-						     var y = (obj.row - 1) * _this.config.blockSize;
-						     return "translate ("+x+" "+y+")"; })
+					            var y = (obj.row - 1) * _this.config.blockSize;
+						    return "translate ("+x+" "+y+")"; })
                 .style('fill', function(obj) {
                     return _this.config.colors[obj.color % _this.config.colors.length] || _this.config.colors[0];
                 });
 
 	    linkNodes.transition(_this.config.transitionTime)
-	        .attr('x1', function(obj) { return 32;})
-		.attr('y1', function(obj) { return parentTextYFunction(obj);} )
-		.attr('x2', function(obj) { return 32 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
-	        .attr('y2', function(obj) { return parentTextYFunction(null, obj.target[0]) + nodeYFunction(lookUpNode(obj.target[2], obj.target[1]));} );
-
+	        .attr('x1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeXFunction(source)+64; })
+		.attr('y1', function(obj) {  var source = lookUpNode(obj.source[2], obj.source[1]); return nodeYFunction(source)+32;} )
+		.attr('x2', function(obj) { return 64 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
+	        .attr('y2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]);
+					    return nodeYFunction(target)+32;} );
             // Delete removed child nodes.
             childrenNodes.exit().transition(_this.config.transitionTime).remove();
             linkNodes.exit().transition(_this.config.transitionTime).remove();
