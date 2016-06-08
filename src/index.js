@@ -580,15 +580,24 @@
             // Add new child nodes.
             _this.config.nodeDrawCallback(_this, childrenNodes.enter());
 
+	    function configureLinePositions(selection)
+	    {
+		selection.attr('x1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeXFunction(source)+64; })
+		.attr('y1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeYFunction(source)+32;} )
+		.attr('x2', function(obj) { return 64 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
+	        .attr('y2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]);
+					    return nodeYFunction(target)+32;} );
+	    }
+
 	    var linkJson = [ {source: [0, 'Sym2', 'd3d.o'], target:[1,'Sym4', 'klf.o'] },
 			     {source: [0, 'Sym3', 'd3d.o'], target:[1,'Sym3', 'ttf.o'] }];
 
             var linkNodes = this.svg.selectAll('.relationshipGraph-call').data(linkJson);
+
             // Add new child nodes.
-            linkNodes.enter().append("line").attr('x1', function(obj) { return 64;})
-		.attr('y1', function(obj, index) { return parentTextYFunction(null, index);} )
-		.attr('x2', function(obj, index) { return 64 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
-	        .attr('y2', function(obj, index) { return parentTextYFunction(null, obj.target[0]) + nodeYFunction(lookUpNode(obj.target[2], obj.target[1]));} ).style("stroke", "#000").attr('class', 'relationshipGraph-call');
+	    var links = linkNodes.enter().append("line");
+	    configureLinePositions(links);
+	    links.style("stroke", "#000").attr('class', 'relationshipGraph-call');
 
             // Update existing child nodes.
             childrenNodes.transition(_this.config.transitionTime)
@@ -599,12 +608,10 @@
                     return _this.config.colors[obj.color % _this.config.colors.length] || _this.config.colors[0];
                 });
 
-	    linkNodes.transition(_this.config.transitionTime)
-	        .attr('x1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeXFunction(source)+64; })
-		.attr('y1', function(obj) {  var source = lookUpNode(obj.source[2], obj.source[1]); return nodeYFunction(source)+32;} )
-		.attr('x2', function(obj) { return 64 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
-	        .attr('y2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]);
-					    return nodeYFunction(target)+32;} );
+
+	    var linkTransitions = linkNodes.transition(_this.config.transitionTime);
+	    configureLinePositions(linkTransitions);
+
             // Delete removed child nodes.
             childrenNodes.exit().transition(_this.config.transitionTime).remove();
             linkNodes.exit().transition(_this.config.transitionTime).remove();
