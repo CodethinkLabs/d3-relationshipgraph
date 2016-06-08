@@ -112,11 +112,11 @@
             nodeDrawCallback: userConfig.nodeDrawCallback || null,  // Whether or not to show the keys in the tooltip.
             thresholds: userConfig.thresholds,  // Thresholds to determine the colors of the child blocks with.
             colors: userConfig.colors || ['#c4f1be', '#a2c3a4', '#869d96', '#525b76', '#201e50',
-                '#485447', '#5b7f77', '#6474ad', '#b9c6cb', '#c0d6c1',
-                '#754668', '#587d71', '#4daa57', '#b5dda4', '#f9eccc',
-                '#0e7c7b', '#17bebb', '#d4f4dd', '#d62246', '#4b1d3f',
-                '#cf4799', '#c42583', '#731451', '#f3d1bf', '#c77745'
-            ],  // Colors to use for blocks.
+					  '#485447', '#5b7f77', '#6474ad', '#b9c6cb', '#c0d6c1',
+					  '#754668', '#587d71', '#4daa57', '#b5dda4', '#f9eccc',
+					  '#0e7c7b', '#17bebb', '#d4f4dd', '#d62246', '#4b1d3f',
+					  '#cf4799', '#c42583', '#731451', '#f3d1bf', '#c77745'
+					 ],  // Colors to use for blocks.
             transitionTime: userConfig.transitionTime || 1500,  // Time for a transition to start and complete (in milliseconds).
             truncate: userConfig.truncate || 25  // Maximum length of a parent label before it gets truncated. Use 0 to turn off truncation.
         };
@@ -312,8 +312,8 @@
         var longestWidth = that.ctx.measureText(longest).width,
             parentDiv = that.config.selection[0][0],
             calculatedMaxChildren = (that.config.maxChildCount === 0) ?
-                Math.floor((parentDiv.parentElement.clientWidth - 15 - longestWidth) / that.config.blockSize) :
-                that.config.maxChildCount;
+            Math.floor((parentDiv.parentElement.clientWidth - 15 - longestWidth) / that.config.blockSize) :
+            that.config.maxChildCount;
 
         for (i = 0; i < json.length; i++) {
             var element = json[i],
@@ -488,32 +488,28 @@
                 .data(parents);
 
 	    function parentTextXFunction(obj,index) {
-                    var width = _this.ctx.measureText(obj + ' (' + parentSizes[Object.keys(parentSizes)[index]] + ')');
-                    return longestWidth - width.width;
+                var width = _this.ctx.measureText(obj + ' (' + parentSizes[Object.keys(parentSizes)[index]] + ')');
+                return longestWidth - width.width;
 	    }
 
 	    function parentTextYFunction(obj, index) {
 		if (index === 0 || index === "undefined") {
-                    console.log("PTY: no index; returning 0");
 		    return 0;
                 }
-		console.log("looking up parent Text Y: index is "+index);
-                    // Determine the Y coordinate by determining the Y coordinate of all of the parents before. This has to be calculated completely
-                    // because it is an update and can occur anywhere.
-                    var previousParentSize = 0,
-                        i = index - 1;
+                // Determine the Y coordinate by determining the Y coordinate of all of the parents before. This has to be calculated completely
+                // because it is an update and can occur anywhere.
+                var previousParentSize = 0,
+                    i = index - 1;
 
-                    while (i > -1) {
-			var key = Object.keys(parentSizes)[i];
-			if(key) {
-                            previousParentSize += Math.ceil(parentSizes[key] / calculatedMaxChildren) * calculatedMaxChildren;
-			    console.log("Index "+i+"; previousParentSize is now "+previousParentSize+". Keys="+Object.keys(parentSizes)[i]);
-			}
-                        i--;
-                    }
+                while (i > -1) {
+		    var key = Object.keys(parentSizes)[i];
+		    if(key) {
+                        previousParentSize += Math.ceil(parentSizes[key] / calculatedMaxChildren) * calculatedMaxChildren;
+		    }
+                    i--;
+                }
 
 		var y =  Math.ceil(previousParentSize / calculatedMaxChildren) * _this.config.blockSize;
-                console.log("PTY: returning "+y+" for "+calculatedMaxChildren+" maxChildren, "+previousParentSize+" prevParents");
 		return y;
 	    }
 
@@ -563,7 +559,6 @@
 	    // Find a node with a given name and parent
 	    function lookUpNode(objectName, symbolName)
 	    {
-		console.log("Looking up object "+objectName+"/"+symbolName);
 		for (var i=0;i<json.length;i++) {
 		    var node = json[i];
 		    if(node.Object == symbolName && node.parent == objectName)
@@ -582,11 +577,11 @@
 
 	    function configureLinePositions(selection)
 	    {
-		selection.attr('x1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeXFunction(source)+64; })
-		.attr('y1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeYFunction(source)+32;} )
-		.attr('x2', function(obj) { return 64 + nodeXFunction(lookUpNode(obj.target[2], obj.target[1]));})
-	        .attr('y2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]);
-					    return nodeYFunction(target)+32;} );
+		selection
+		    .attr('x1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeXFunction(source) + 64; })
+		    .attr('y1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeYFunction(source) + 32; })
+		    .attr('x2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]); return nodeXFunction(target) + 64; })
+	            .attr('y2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]); return nodeYFunction(target) + 32; });
 	    }
 
 	    var linkJson = [ {source: [0, 'Sym2', 'd3d.o'], target:[1,'Sym4', 'klf.o'] },
