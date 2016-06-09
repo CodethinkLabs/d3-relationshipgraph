@@ -18,6 +18,7 @@ packageName= "libhfr";
 
 var nodeid = "id:calls."+packageName;
 $.getJSON('http://localhost:8080/graph/present/' + nodeid, function (node_info) {
+    var callGraph = [];
     console.log("Displaying node: ", node_info);
     var pack = node_info.nodes[0];
     console.log("Package returned: "+pack.caption);
@@ -25,23 +26,35 @@ $.getJSON('http://localhost:8080/graph/present/' + nodeid, function (node_info) 
     for(var o=0;o<pack.contains.nodes.length;o++) {
 	var object = pack.contains.nodes[o];
 	console.log("Recording object "+object.caption);
+	allNodes = {}
 	for (var s=0;s<object.contains.nodes.length;s++) {
-	    json1.push( { "Object": object.contains.nodes[s].caption.substr(0,4), "parent": pack.contains.nodes[o].caption.substr(0,4), "value": 0 });
+	    var node = object.contains.nodes[s];
+	    json1.push( { "Object": node.caption.substr(0,4), "parent": node.caption.substr(0,4), "value": 0, "_id": node._id });
+	    allNodes[node._id] = true;
 
 	}
+	for (var e=0;e<object.contains.edges.length;e++) {
+	    var edge = object.contains.edges[e];
+	    if(allNodes[edge._source] == true && allNodes[edge._target] == true) {
+		callGraph.push( { source: [edge._source, "", ""], target: [edge._target, "", ""] } );
+	    }
+	}
+
+
     }
-    graph.data(json1);
+    graph.data(json1, callGraph);
+
 });
 
 var calls = [ { source: 0, target: 1}, {source: 1, target: 2} ];
 
 blockSize = 64;
 
-function nodeXFunction (obj) { if(obj.index) return 32 + ((obj.index - 1) * blockSize);
+function nodeXFunction (obj) { if(obj && obj.index) return 32 + ((obj.index - 1) * blockSize);
 			       console.log("Object: "+obj+" has no index"); return 0; }
 function nodeYFunction (obj) {
+    if(obj===null) return 0;
     var y = (obj.row - 1) * blockSize;
-    console.log("NY: "+obj.Object+" returning "+y+" for row "+obj.row)
     return y; }
 
 function nodeTranslationFunction (obj) { var x = nodeXFunction(obj);

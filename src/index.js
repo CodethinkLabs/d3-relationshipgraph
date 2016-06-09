@@ -441,7 +441,7 @@
      * @param json {Array} The array of JSON to feed to the graph.
      * @return {RelationshipGraph} The RelationshipGraph object to keep d3's chaining functionality.
      */
-    RelationshipGraph.prototype.data = function(json) {
+    RelationshipGraph.prototype.data = function(json, callGraph) {
         if (this.verifyJson(json)) {
             var row,
                 parents = [],
@@ -568,6 +568,19 @@
 		return null;
 	    }
 
+	    // Find a node with a given name and parent
+	    function lookUpNodeById(id)
+	    {
+		for (var i=0;i<json.length;i++) {
+		    var node = json[i];
+		    if(node._id == id) {
+			return node;
+		    }
+		}
+		console.log("No object found with ID "+id);
+		return null;
+	    }
+
 	    // Select all of the children nodes.
             var childrenNodes = this.svg.selectAll('.relationshipGraph-node')
                 .data(json);
@@ -578,17 +591,14 @@
 	    function configureLinePositions(selection)
 	    {
 		selection
-		    .attr('x1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeXFunction(source) + 64; })
-		    .attr('y1', function(obj) { var source = lookUpNode(obj.source[2], obj.source[1]); return nodeYFunction(source) + 32; })
-		    .attr('x2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]); return nodeXFunction(target) + 64; })
-	            .attr('y2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]); return nodeYFunction(target) + 32; });
+		    .attr('x1', function(obj) { var source = lookUpNodeById(obj.source[0]); return nodeXFunction(source) + 64; })
+		    .attr('y1', function(obj) { var source = lookUpNodeById(obj.source[0]); return nodeYFunction(source) + 32; })
+		    .attr('x2', function(obj) { var target = lookUpNodeById(obj.target[0]); return nodeXFunction(target) + 64; })
+	            .attr('y2', function(obj) { var target = lookUpNodeById(obj.target[0]); return nodeYFunction(target) + 32; });
 	    }
 
 	    /* Links */
-	    var linkJson = [ {source: [0, 'Sym2', 'd3d.o'], target:[1,'Sym4', 'klf.o'] },
-			     {source: [0, 'Sym3', 'd3d.o'], target:[1,'Sym3', 'ttf.o'] }];
-
-            var linkNodes = this.svg.selectAll('.relationshipGraph-call').data(linkJson);
+            var linkNodes = this.svg.selectAll('.relationshipGraph-call').data(callGraph);
 
             // Add new child nodes.
 	    var links = linkNodes.enter().append("line");
