@@ -14,6 +14,24 @@ var json1 = [ { "Object": "Sym1", "parent": "d3d.o", "value": 0 },
 	      { "Object": "Sym4", "parent": "klf.o", "value": 2 },
     ];
 
+packageName= "libhfr";
+
+var nodeid = "id:calls."+packageName;
+$.getJSON('http://localhost:8080/graph/present/' + nodeid, function (node_info) {
+    console.log("Displaying node: ", node_info);
+    var pack = node_info.nodes[0];
+    console.log("Package returned: "+pack.caption);
+
+    for(var o=0;o<pack.contains.nodes.length;o++) {
+	var object = pack.contains.nodes[o];
+	console.log("Recording object "+object.caption);
+	for (var s=0;s<object.contains.nodes.length;s++) {
+	    json1.push( { "Object": object.contains.nodes[s].caption.substr(0,4), "parent": pack.contains.nodes[o].caption.substr(0,4), "value": 0 });
+
+	}
+    }
+    graph.data(json1);
+});
 
 var calls = [ { source: 0, target: 1}, {source: 1, target: 2} ];
 
@@ -72,9 +90,6 @@ function initGraph()
 }
 
 var graph = initGraph();
-
-
-graph.data(json1);
 
 var interval = null;
 
