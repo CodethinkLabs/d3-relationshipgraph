@@ -584,6 +584,7 @@
 	            .attr('y2', function(obj) { var target = lookUpNode(obj.target[2], obj.target[1]); return nodeYFunction(target) + 32; });
 	    }
 
+	    /* Links */
 	    var linkJson = [ {source: [0, 'Sym2', 'd3d.o'], target:[1,'Sym4', 'klf.o'] },
 			     {source: [0, 'Sym3', 'd3d.o'], target:[1,'Sym3', 'ttf.o'] }];
 

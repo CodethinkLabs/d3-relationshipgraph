@@ -101,31 +101,9 @@ function data1() {
     document.querySelector('h1').innerHTML = 'Package View';
 }
 
-function random() {
-    graph = initGraph();
-    var getData = function () {
-        var json = [ { "Object": "Sym3", "parent": "ttf.o", "value": 2 } ];
 
-        for (var j = 0; j < 35; j++) {
-            var obj = {
-                'parent': 'parent' + Math.floor(Math.random() * 6),
-                'value': 1000000000 * Math.floor(Math.random() * 3)
-            };
+document.querySelector('h1').innerHTML = packageName;
 
-            json.push(obj);
-        }
-
-        graph.data(json);
-    };
-
-    getData();
-
-    if (interval === null) {
-        interval = setInterval(getData, 1000);
-    }
-
-    document.querySelector('h1').innerHTML = 'Random Data';
-}
 
 // Thing to add all the callers
 var data = [ "A", "B", "C", "D" ];
